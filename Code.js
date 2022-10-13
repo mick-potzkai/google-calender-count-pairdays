@@ -3,10 +3,10 @@
 function main() {
   const userPropertyStore = PropertiesService.getUserProperties()
   console.log(`CalendarId: ${userPropertyStore.getProperty('calendarId')}`)
-  const lastdeveloperSwitchesUpdate = Number(userPropertyStore.getProperty('lastdeveloperSwitchesUpdate'))
+  const lastDeveloperSwitchesUpdate = Number(userPropertyStore.getProperty('lastDeveloperSwitchesUpdate'))
   // TODO: validate that enddate is in the future
   if (userPropertyStore.getProperty('calendarId') && userPropertyStore.getProperty('startdate') && userPropertyStore.getProperty('enddate')) {
-    if (lastdeveloperSwitchesUpdate < (+new Date()) - (24 * 60 * 60 * 1000)) {
+    if (lastDeveloperSwitchesUpdate < (+new Date()) - (24 * 60 * 60 * 1000)) {
       return buildCard('Set Developers', setDevelopersSection())
     } else {
       return buildCard('Count Pairdays', countPairdaysSection())
@@ -24,38 +24,38 @@ function buildCard(cardName, section) {
 }
 
 function chooseDefaultsSection() {
-  let startdate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
-  let enddate = Number(PropertiesService.getUserProperties().getProperty('enddate'))
+  let startDate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
+  let endDate = Number(PropertiesService.getUserProperties().getProperty('enddate'))
   let calendarId = PropertiesService.getUserProperties().getProperty('calendarId')
-  const currentdate = +new Date()
-  if (!startdate || startdate < currentdate) {
-    startdate = currentdate
+  const currentDate = +new Date()
+  if (!startDate || startDate < currentDate) {
+    startDate = currentDate
   }
-  if (!enddate || enddate < startdate) {
-    console.log(`startdate: ${startdate}`)
-    enddate = Number(startdate) + 3 * 24 * 60 * 60 * 1000 // 3 Tage Zeitspanne
-    console.log(`enddate: ${enddate}`)
+  if (!endDate || endDate < startDate) {
+    console.log(`startdate: ${startDate}`)
+    endDate = Number(startDate) + 3 * 24 * 60 * 60 * 1000 // 3 Tage Zeitspanne
+    console.log(`enddate: ${endDate}`)
   } else {
-    console.log(`enddate (${new Date(enddate)}) was larger than startdate (${new Date(startdate)})`)
+    console.log(`enddate (${new Date(endDate)}) was larger than startdate (${new Date(startDate)})`)
   }
 
-  var startDatePicker = CardService.newDatePicker()
+  const startDatePicker = CardService.newDatePicker()
       .setTitle("Start Date (exclusive)")
       .setFieldName("date_field_start_time")
       // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
-      .setValueInMsSinceEpoch(startdate)
+      .setValueInMsSinceEpoch(startDate)
       .setOnChangeAction(CardService.newAction()
           .setFunctionName("handleStartTimeChange"));
 
-  var endDatePicker = CardService.newDatePicker()
+  const endDatePicker = CardService.newDatePicker()
       .setTitle("End Date (exclusive)")
       .setFieldName("date_field_end_time")
       // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
-      .setValueInMsSinceEpoch(enddate)
+      .setValueInMsSinceEpoch(endDate)
       .setOnChangeAction(CardService.newAction()
           .setFunctionName("handleEndTimeChange"));
 
-  var calendars = CalendarApp.getAllCalendars()
+  const calendars = CalendarApp.getAllCalendars();
   const calendarDropdown = CardService.newSelectionInput()
       .setType(CardService.SelectionInputType.DROPDOWN)
       .setFieldName("selected_calender")
@@ -71,50 +71,48 @@ function chooseDefaultsSection() {
           calendarId ? (calendar.getId() === calendarId) : (calendar.getName() === 'Gremlins')
       ));
 
-  var submitButton = CardService.newTextButton()
+  const submitButton = CardService.newTextButton()
       .setText("Next ->")
       .setOnClickAction(CardService.newAction()
-          .setFunctionName("handleChangeDevelopersButton"))
+          .setFunctionName("handleChangeDevelopersButton"));
 
-  const defaultsSection = CardService.newCardSection()
+  return CardService.newCardSection()
       .addWidget(startDatePicker)
       .addWidget(endDatePicker)
       .addWidget(calendarDropdown)
-      .addWidget(submitButton)
-
-  return defaultsSection;
+      .addWidget(submitButton);
 }
 
 function setDevelopersSection() {
-  var changeDefaultsButton = CardService.newTextButton()
+  const changeDefaultsButton = CardService.newTextButton()
       .setText("<- Change Defaults")
       .setOnClickAction(CardService.newAction()
-          .setFunctionName("handleChangeDefaultsButton"))
+          .setFunctionName("handleChangeDefaultsButton"));
 
 
-  let startdate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
-  let enddate = Number(PropertiesService.getUserProperties().getProperty('enddate'))
+  let startDate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
+  let endDate = Number(PropertiesService.getUserProperties().getProperty('enddate'))
   let calendarId = PropertiesService.getUserProperties().getProperty('calendarId')
   let developerSwitchChoicesString = PropertiesService.getUserProperties().getProperty('developerSwitchChoices')
   let developerSwitchChoices = {}
 
   // Get calendar object from calendarId
-  var calendar = CalendarApp.getAllCalendars().filter(calendar => calendar.getId() === calendarId)[0]
-  console.log(`Evaluating calendar ${calendar.getTitle()} in the range of ${new Date(Number(startdate))} to ${new Date(Number(enddate))}`)
+  const calendar = CalendarApp.getAllCalendars().filter(calendar => calendar.getId() === calendarId)[0];
+  console.log(`Evaluating calendar ${calendar.getTitle()} in the range of ${new Date(Number(startDate))} to ${new Date(Number(endDate))}`)
 
 
-  var currentdate = startdate
+  let currentDate = startDate;
   // TODO: Fix this Abbruchkriterium
-  var allDevelopersDict = {}
-  while (currentdate <= (enddate - 24 * 60 * 60 * 1000)) {
-    currentdate += 24 * 60 * 60 * 1000  // Move one day forward; Note that the startdate is exclusive
+  const allDevelopersDict = {};
+  while (currentDate <= (endDate - 24 * 60 * 60 * 1000)) {
+    currentDate += 24 * 60 * 60 * 1000  // Move one day forward; Note that the startdate is exclusive
 
     // get the calender events
-    events = calendar.getEventsForDay(new Date(currentdate))
+    events = calendar.getEventsForDay(new Date(currentDate))
     filteredEvents = events.filter(event => event.isAllDayEvent())
     filteredEvents = filteredEvents.filter(event => eventFilter(event.getTitle()))
     filteredEvents.forEach(event => {
-      console.log(`On ${new Date(currentdate)} there is an event with the title ${event.getTitle()}`)
+      console.log(`On ${new Date(currentDate)} there is an event with the title ${event.getTitle()}`)
       allDevelopersDict[event.getTitle()] = event.getId()
     })
   }
@@ -205,7 +203,7 @@ function saveDeveloperSwitchChoices(event) {
   }
 
   userPropertyStore.setProperty('developerSwitchChoices', JSON.stringify(developerChoicesDict))
-  userPropertyStore.setProperty('lastdeveloperSwitchesUpdate', +new Date())
+  userPropertyStore.setProperty('lastDeveloperSwitchesUpdate', +new Date())
 
 
   return main()
