@@ -1,1 +1,5 @@
-It appears to not be possible to change values of a template with a onChange-Function of for example a date-picker, like it would have been possible with React. Therefore, I am looking for alternatives. The [React-Google-Apps-Script](https://github.com/enuchi/React-Google-Apps-Script)-Repo appears to be helpful in this case. According to its README it gives a boilerplate to develop a React-Google-Add-On. Lets see...
+# Google Calendar Pairdays Counter
+This Add-On will allow you to count (scrum) pairdays for a given timespan easily in your google calendar. Simply add this Add-On to your Google Calendar; click on the Icon on the right hand side; select a calendar, start and end date; choose which full-day events are developer and which are not. Afterwards the Add-On computes the number of pairdays :party:
+
+## How to get started
+TODO...
