@@ -18,12 +18,12 @@ function main() {
 
 function buildCard(cardName, section) {
   return CardService.newCardBuilder()
-    .setName(cardName)
-    .addSection(section)
-    .build();
+      .setName(cardName)
+      .addSection(section)
+      .build();
 }
 
-function chooseDefaultsSection(){
+function chooseDefaultsSection() {
   let startdate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
   let enddate = Number(PropertiesService.getUserProperties().getProperty('enddate'))
   let calendarId = PropertiesService.getUserProperties().getProperty('calendarId')
@@ -40,56 +40,56 @@ function chooseDefaultsSection(){
   }
 
   var startDatePicker = CardService.newDatePicker()
-    .setTitle("Start Date (exclusive)")
-    .setFieldName("date_field_start_time")
-    // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
-    .setValueInMsSinceEpoch(startdate)
-    .setOnChangeAction(CardService.newAction()
-        .setFunctionName("handleStartTimeChange"));
+      .setTitle("Start Date (exclusive)")
+      .setFieldName("date_field_start_time")
+      // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
+      .setValueInMsSinceEpoch(startdate)
+      .setOnChangeAction(CardService.newAction()
+          .setFunctionName("handleStartTimeChange"));
 
   var endDatePicker = CardService.newDatePicker()
-    .setTitle("End Date (exclusive)")
-    .setFieldName("date_field_end_time")
-    // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
-    .setValueInMsSinceEpoch(enddate)
-    .setOnChangeAction(CardService.newAction()
-        .setFunctionName("handleEndTimeChange"));
+      .setTitle("End Date (exclusive)")
+      .setFieldName("date_field_end_time")
+      // Set default value as Jan 1, 2018 UTC. Either a number or string is acceptable.
+      .setValueInMsSinceEpoch(enddate)
+      .setOnChangeAction(CardService.newAction()
+          .setFunctionName("handleEndTimeChange"));
 
   var calendars = CalendarApp.getAllCalendars()
   const calendarDropdown = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.DROPDOWN)
-    .setFieldName("selected_calender")
-    .setTitle("Select a Calendar")
-    .setOnChangeAction(CardService.newAction()
-        .setFunctionName("handleDropDownChange"))
+      .setType(CardService.SelectionInputType.DROPDOWN)
+      .setFieldName("selected_calender")
+      .setTitle("Select a Calendar")
+      .setOnChangeAction(CardService.newAction()
+          .setFunctionName("handleDropDownChange"))
 
 
-  calendars.forEach(calendar => 
-    calendarDropdown.addItem(
-    calendar.getName(),
-    calendar.getId(),
-    calendarId ? (calendar.getId() === calendarId) : (calendar.getName() === 'Gremlins')
-  ));
+  calendars.forEach(calendar =>
+      calendarDropdown.addItem(
+          calendar.getName(),
+          calendar.getId(),
+          calendarId ? (calendar.getId() === calendarId) : (calendar.getName() === 'Gremlins')
+      ));
 
   var submitButton = CardService.newTextButton()
-    .setText("Next ->")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("handleChangeDevelopersButton"))
+      .setText("Next ->")
+      .setOnClickAction(CardService.newAction()
+          .setFunctionName("handleChangeDevelopersButton"))
 
   const defaultsSection = CardService.newCardSection()
-    .addWidget(startDatePicker)
-    .addWidget(endDatePicker)
-    .addWidget(calendarDropdown)
-    .addWidget(submitButton)
+      .addWidget(startDatePicker)
+      .addWidget(endDatePicker)
+      .addWidget(calendarDropdown)
+      .addWidget(submitButton)
 
   return defaultsSection;
 }
 
-function setDevelopersSection(){
+function setDevelopersSection() {
   var changeDefaultsButton = CardService.newTextButton()
-    .setText("<- Change Defaults")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("handleChangeDefaultsButton"))
+      .setText("<- Change Defaults")
+      .setOnClickAction(CardService.newAction()
+          .setFunctionName("handleChangeDefaultsButton"))
 
 
   let startdate = Number(PropertiesService.getUserProperties().getProperty('startdate'))
@@ -106,9 +106,9 @@ function setDevelopersSection(){
   var currentdate = startdate
   // TODO: Fix this Abbruchkriterium
   var allDevelopersDict = {}
-  while (currentdate <= (enddate - 24 * 60  * 60 * 1000)) {
-    currentdate += 24 * 60  * 60 * 1000  // Move one day forward; Note that the startdate is exclusive
-    
+  while (currentdate <= (enddate - 24 * 60 * 60 * 1000)) {
+    currentdate += 24 * 60 * 60 * 1000  // Move one day forward; Note that the startdate is exclusive
+
     // get the calender events
     events = calendar.getEventsForDay(new Date(currentdate))
     filteredEvents = events.filter(event => event.isAllDayEvent())
@@ -118,45 +118,47 @@ function setDevelopersSection(){
       allDevelopersDict[event.getTitle()] = event.getId()
     })
   }
-  
+
 
   if (developerSwitchChoicesString) {
     try {
-        developerSwitchChoices = JSON.parse(developerSwitchChoicesString)
+      developerSwitchChoices = JSON.parse(developerSwitchChoicesString)
     } catch (e) {
-        console.log(e)
+      console.log(e)
     }
   }
 
 
   // Make Dict to Array
-  allDevelopers = Object.entries(allDevelopersDict).map((event, _) => {return {title: event[0], id: event[1]}})
+  allDevelopers = Object.entries(allDevelopersDict).map((event, _) => {
+    return {title: event[0], id: event[1]}
+  })
   listOfAllDevelopers = []
 
-  var developerSwitches  = allDevelopers
-    .map(({title, id}) => {
-      listOfAllDevelopers.push(title)
-      let isSelected = Object.keys(developerSwitchChoices).includes(title) ? developerSwitchChoices[title] : false
-      console.log(`Create DeveloperSwitch with name ${title} (selected = ${isSelected})`)
-      return CardService.newDecoratedText()
-        .setText(title)
-        .setWrapText(true)
-        .setSwitchControl(CardService.newSwitch()
-          .setFieldName(title)
-          .setValue('True')
-          .setSelected(isSelected))
-    })
+  var developerSwitches = allDevelopers
+      .map(({title, id}) => {
+        listOfAllDevelopers.push(title)
+        let isSelected = Object.keys(developerSwitchChoices).includes(title) ? developerSwitchChoices[title] : false
+        console.log(`Create DeveloperSwitch with name ${title} (selected = ${isSelected})`)
+        return CardService.newDecoratedText()
+            .setText(title)
+            .setWrapText(true)
+            .setSwitchControl(CardService.newSwitch()
+                .setFieldName(title)
+                .setValue('True')
+                .setSelected(isSelected))
+      })
 
-  
+
   var nextButton = CardService.newTextButton()
-    .setText("Next ->")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("saveDeveloperSwitchChoices")
-      .setParameters({ listOfAllDevelopers: JSON.stringify(listOfAllDevelopers)}))
-  
+      .setText("Next ->")
+      .setOnClickAction(CardService.newAction()
+          .setFunctionName("saveDeveloperSwitchChoices")
+          .setParameters({listOfAllDevelopers: JSON.stringify(listOfAllDevelopers)}))
+
 
   card = CardService.newCardSection()
-    .addWidget(changeDefaultsButton)
+      .addWidget(changeDefaultsButton)
 
   developerSwitches.forEach(developerSwitch => card.addWidget(developerSwitch))
   card.addWidget(nextButton)
@@ -166,14 +168,14 @@ function setDevelopersSection(){
 
 function countPairdaysSection() {
   var changeDevelopersButton = CardService.newTextButton()
-    .setText("<- Set Developers")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("handleChangeDevelopersButton"))
+      .setText("<- Set Developers")
+      .setOnClickAction(CardService.newAction()
+          .setFunctionName("handleChangeDevelopersButton"))
 
   var pairdayscount = countPairDaysFromProperties()
 
   var pairdays = CardService.newDecoratedText()
-    .setText(`Pairdays: ${pairdayscount}`)
+      .setText(`Pairdays: ${pairdayscount}`)
 
   return CardService.newCardSection()
       .addWidget(changeDevelopersButton)
@@ -187,9 +189,9 @@ function saveDeveloperSwitchChoices(event) {
   var developerChoicesDict = {}
   if (developerSwitchChoicesString) {
     try {
-        developerChoicesDict = JSON.parse(developerSwitchChoicesString)
+      developerChoicesDict = JSON.parse(developerSwitchChoicesString)
     } catch (e) {
-        console.log(e)
+      console.log(e)
     }
   }
 
@@ -228,12 +230,12 @@ function handleDropDownChange(event) {
   userPropertyStore.setProperty('calendarId', calendar_id)
 }
 
-function handleChangeDefaultsButton(){
+function handleChangeDefaultsButton() {
   return buildCard('Choose Defaults', chooseDefaultsSection())
 }
 
-function handleChangeDevelopersButton(){
-      return buildCard('Set Developers', setDevelopersSection())
+function handleChangeDevelopersButton() {
+  return buildCard('Set Developers', setDevelopersSection())
 }
 
 
@@ -252,7 +254,7 @@ function countPairDays(calendarId, startTime, endTime, developerChoicesDict) {
       return false
     } else {
       if (date1.getMonth() < date2.getMonth()) {
-      return true
+        return true
       } else if (date1.getMonth() > date2.getMonth()) {
         return false
       } else {
@@ -265,16 +267,17 @@ function countPairDays(calendarId, startTime, endTime, developerChoicesDict) {
     }
   }
 
-  var calendar = CalendarApp.getCalendarById(calendarId)
+  const calendar = CalendarApp.getCalendarById(calendarId);
   var currentTime = startTime + 24 * 60 * 60 * 1000
   var totalPairDays = 0
 
   while (isBefore(new Date(currentTime), new Date(endTime))) {
     var dailyPairDays = calendar.getEventsForDay(new Date(currentTime))
-      .filter(event => (developerChoicesDict[event.getTitle()] ?? false))
-      .length
+        .filter(event => event.isAllDayEvent())
+        .filter(event => (developerChoicesDict[event.getTitle()] ?? false))
+        .length
 
-    dailyPairDays = Math.floor(dailyPairDays/2)
+    dailyPairDays = Math.floor(dailyPairDays / 2)
 
     console.log(`Info: Found ${dailyPairDays} Pairs on day ${(new Date(currentTime)).toDateString()}.`)
     totalPairDays += dailyPairDays
@@ -289,14 +292,14 @@ function countPairDaysFromProperties() {
   var calendarId = userPropertyStore.getProperty('calendarId')
   var startTime = Number(userPropertyStore.getProperty('startdate'))
   var endTime = Number(userPropertyStore.getProperty('enddate'))
-  
+
   var developerSwitchChoicesString = userPropertyStore.getProperty('developerSwitchChoices')
   var developerChoicesDict = {}
   if (developerSwitchChoicesString) {
     try {
-        developerChoicesDict = JSON.parse(developerSwitchChoicesString)
+      developerChoicesDict = JSON.parse(developerSwitchChoicesString)
     } catch (e) {
-        console.log(e)
+      console.log(e)
     }
   }
 
