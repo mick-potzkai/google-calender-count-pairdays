@@ -211,20 +211,20 @@ function saveDeveloperSwitchChoices(event) {
 
 function handleStartTimeChange(event) {
   const userPropertyStore = PropertiesService.getUserProperties()
-  var start_time = event.formInputs['date_field_start_time'][0]['msSinceEpoch']
+  const start_time = event.formInputs['date_field_start_time'][0]['msSinceEpoch'];
   userPropertyStore.setProperty('startDate', start_time)
 }
 
 function handleEndTimeChange(event) {
   const userPropertyStore = PropertiesService.getUserProperties()
-  var end_time = event.formInputs['date_field_end_time'][0]['msSinceEpoch']
+  const end_time = event.formInputs['date_field_end_time'][0]['msSinceEpoch'];
   userPropertyStore.setProperty('endDate', end_time)
 }
 
 function handleDropDownChange(event) {
   console.log(event)
   const userPropertyStore = PropertiesService.getUserProperties()
-  var calendar_id = event.formInputs['selected_calender'][0]
+  const calendar_id = event.formInputs['selected_calender'][0];
   userPropertyStore.setProperty('calendarId', calendar_id)
 }
 
@@ -240,7 +240,7 @@ function handleChangeDevelopersButton() {
 function eventFilter(eventName) {
   // Returns 'false' if the name of the event includes 'ab 12 Uhr' or 'bis 12 Uhr' or similiar things
   // Otherwise 'true
-  var regex = /^.*(\s|\()(ab|bis)\s\d.*$/
+  const regex = /^.*(\s|\()(ab|bis)\s\d.*$/;
   return !regex.test(eventName)
 }
 
@@ -256,24 +256,20 @@ function countPairDays(calendarId, startTime, endTime, developerChoicesDict) {
       } else if (date1.getMonth() > date2.getMonth()) {
         return false
       } else {
-        if (date1.getDate() < date2.getDate()) {
-          return true
-        } else {
-          return false
-        }
+        return date1.getDate() < date2.getDate();
       }
     }
   }
 
   const calendar = CalendarApp.getCalendarById(calendarId);
-  var currentTime = startTime + 24 * 60 * 60 * 1000
-  var totalPairDays = 0
+  let currentTime = startTime + 24 * 60 * 60 * 1000;
+  let totalPairDays = 0;
 
   while (isBefore(new Date(currentTime), new Date(endTime))) {
-    var dailyPairDays = calendar.getEventsForDay(new Date(currentTime))
+    let dailyPairDays = calendar.getEventsForDay(new Date(currentTime))
         .filter(event => event.isAllDayEvent())
         .filter(event => (developerChoicesDict[event.getTitle()] ?? false))
-        .length
+        .length;
 
     dailyPairDays = Math.floor(dailyPairDays / 2)
 
@@ -287,12 +283,12 @@ function countPairDays(calendarId, startTime, endTime, developerChoicesDict) {
 
 function countPairDaysFromProperties() {
   const userPropertyStore = PropertiesService.getUserProperties()
-  var calendarId = userPropertyStore.getProperty('calendarId')
-  var startTime = Number(userPropertyStore.getProperty('startDate'))
-  var endTime = Number(userPropertyStore.getProperty('endDate'))
+  const calendarId = userPropertyStore.getProperty('calendarId');
+  const startTime = Number(userPropertyStore.getProperty('startDate'));
+  const endTime = Number(userPropertyStore.getProperty('endDate'));
 
-  var developerSwitchChoicesString = userPropertyStore.getProperty('developerSwitchChoices')
-  var developerChoicesDict = {}
+  const developerSwitchChoicesString = userPropertyStore.getProperty('developerSwitchChoices');
+  let developerChoicesDict = {};
   if (developerSwitchChoicesString) {
     try {
       developerChoicesDict = JSON.parse(developerSwitchChoicesString)
