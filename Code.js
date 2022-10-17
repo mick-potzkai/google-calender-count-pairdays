@@ -1,4 +1,4 @@
-// Next up: Refactor; Write chosen calendar, startDate and endDate on every card; detect open fridays (and retros?); save developerChoices onChange
+// Next up: Fix Header; Write chosen calendar, startDate and endDate on every card; detect open fridays (and retros?); save developerChoices onChange
 
 function main() {
   const userPropertyStore = PropertiesService.getUserProperties()
@@ -17,8 +17,15 @@ function main() {
 }
 
 function buildCard(cardName, section) {
+  var cardHeader = CardService.newCardHeader()
+      .setTitle("Card header title")
+      .setSubtitle("Card header subtitle")
+      .setImageStyle(CardService.ImageStyle.CIRCLE)
+      .setImageUrl("https://image.png");
+
   return CardService.newCardBuilder()
       .setName(cardName)
+      .setHeader(cardHeader)
       .addSection(section)
       .build();
 }
