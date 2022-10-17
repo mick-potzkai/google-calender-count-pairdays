@@ -1,4 +1,4 @@
-// Next up: Refactor; Write chosen calender, startDate and endDate on every card; detect open fridays (and retros?)
+// Next up: Refactor; Write chosen calendar, startDate and endDate on every card; detect open fridays (and retros?)
 
 function main() {
   const userPropertyStore = PropertiesService.getUserProperties()
@@ -98,7 +98,7 @@ function setDevelopersSection() {
 
   // Get calendar object from calendarId
   const calendar = CalendarApp.getAllCalendars().filter(calendar => calendar.getId() === calendarId)[0];
-  console.log(`Evaluating calendar ${calendar.getName()} in the range of ${new Date(Number(startDate))} to ${new Date(Number(endDate))}`)
+  console.log(`Info: Evaluating calendar ${calendar.getName()} in the range of ${new Date(Number(startDate))} to ${new Date(Number(endDate))}`)
 
 
   let currentDate = startDate;
@@ -134,7 +134,7 @@ function setDevelopersSection() {
   let listOfAllDevelopers = []
 
   const developerSwitches = allDevelopers
-      .map(({title, id}) => {
+      .map(({title}) => {
         listOfAllDevelopers.push(title)
         let isSelected = Object.keys(developerSwitchChoices).includes(title) ? developerSwitchChoices[title] : false
         console.log(`Create DeveloperSwitch with name ${title} (selected = ${isSelected})`)
@@ -213,12 +213,14 @@ function handleStartTimeChange(event) {
   const userPropertyStore = PropertiesService.getUserProperties()
   const start_time = event.formInputs['date_field_start_time'][0]['msSinceEpoch'];
   userPropertyStore.setProperty('startDate', start_time)
+  console.log(`Info: Setting Start-Time to ${new Date(start_time)}`)
 }
 
 function handleEndTimeChange(event) {
   const userPropertyStore = PropertiesService.getUserProperties()
   const end_time = event.formInputs['date_field_end_time'][0]['msSinceEpoch'];
   userPropertyStore.setProperty('endDate', end_time)
+  console.log(`Info: Setting End-Time to ${new Date(end_time)}`)
 }
 
 function handleDropDownChange(event) {
