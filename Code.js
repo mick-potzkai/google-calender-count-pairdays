@@ -1,4 +1,4 @@
-// Next up: Fix Header; Write chosen calendar, startDate and endDate on every card; detect open fridays (and retros?); save developerChoices onChange
+// Next up: Detect open fridays (and retros?); save developerChoices onChange
 
 function main() {
   const userPropertyStore = PropertiesService.getUserProperties()
@@ -17,15 +17,25 @@ function main() {
 }
 
 function buildCard(cardName, section) {
-  var cardHeader = CardService.newCardHeader()
-      .setTitle("Card header title")
-      .setSubtitle("Card header subtitle")
-      .setImageStyle(CardService.ImageStyle.CIRCLE)
-      .setImageUrl("https://image.png");
+  const cardHeader = createHeader();
 
   return CardService.newCardBuilder()
       .setName(cardName)
       .setHeader(cardHeader)
       .addSection(section)
       .build();
+}
+
+function createHeader() {
+  const userPropertyStore = PropertiesService.getUserProperties()
+  let startDate = Number(userPropertyStore.getProperty('startDate'))
+  let endDate = Number(userPropertyStore.getProperty('endDate'))
+  let calendarId = userPropertyStore.getProperty('calendarId')
+  let calendarName = CalendarApp.getCalendarById(calendarId).getName()
+
+  const dateStringOptions = {weekday: 'short', year: '2-digit', month: '2-digit', day: '2-digit'};
+  return CardService.newCardHeader()
+      //.setTitle("Your beloved pairdays counter")
+      .setTitle(`${calendarName}`)
+      .setSubtitle(`${new Date(startDate).toLocaleDateString('de-DE', dateStringOptions)} - ${new Date(endDate).toLocaleDateString('de-DE', dateStringOptions)}`)
 }
